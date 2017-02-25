@@ -4,3 +4,4 @@ data
 models
 *.swp
 *.p
+/checkpoints
