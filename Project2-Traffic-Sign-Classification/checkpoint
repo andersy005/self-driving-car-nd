@@ -1,0 +1,2 @@
+model_checkpoint_path: "lenet_dropout_traffic"
+all_model_checkpoint_paths: "lenet_dropout_traffic"
