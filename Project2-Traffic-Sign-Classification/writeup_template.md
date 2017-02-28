@@ -1,10 +1,6 @@
-#**Traffic Sign Recognition** 
+#**Traffic Sign Classification using Convolutional Neural Networks + TensorFLow** 
 
-##Writeup Template
 
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
----
 
 **Build a Traffic Sign Recognition Project**
 
@@ -16,17 +12,6 @@ The goals / steps of this project are the following:
 * Analyze the softmax probabilities of the new images
 * Summarize the results with a written report
 
-
-[//]: # (Image References)
-
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -42,73 +27,105 @@ You're reading it! and here is a link to my [project code](https://github.com/ud
 
 ####1. Provide a basic summary of the data set and identify where in your code the summary was done. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
 
-The code for this step is contained in the second code cell of the IPython notebook.  
+The code for this step is contained in the third code cell of the IPython notebook.  
 
-I used the pandas library to calculate summary statistics of the traffic
+I used the NumPy library to calculate summary statistics of the traffic
 signs data set:
 
-* The size of training set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
+- Number of training examples = 34799
+- Number of validation examples = 4410
+- Number of testing examples = 12630
+- Image data shape = (32, 32, 3)
+- Number of classes = 43
 
 ####2. Include an exploratory visualization of the dataset and identify where the code is in your code file.
 
-The code for this step is contained in the third code cell of the IPython notebook.  
+The code for this step is contained in the fourth code cell of the IPython notebook.  
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+Here is an exploratory visualization of the data set. It is a bar chart showing how the number of each sign in the 
+training and testing sets.
 
-![alt text][image1]
+![](assets\distribution.PNG)
+
+~ Exploratory Data Analysis
+==========================
+
+- After examining the provided training dataset for the distribution of the various classes, the classes were found to be highly imbalanced indicating the need to generate new data for the under-represented classes such as class-19, class-27, class-37 to name a few.
+
+- The images differ significantly in terms of contrast and brightness. As a result, we will need to apply some kind of data processing to improve feature extraction.
 
 ###Design and Test a Model Architecture
 
 ####1. Describe how, and identify where in your code, you preprocessed the image data. What tecniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc.
 
-The code for this step is contained in the fourth code cell of the IPython notebook.
+The code for this step is contained in the 11th up to 28th  code cells of the IPython notebook.
 
-As a first step, I decided to convert the images to grayscale because ...
+* For Data Pre-processing, I decided to apply [Contrast Limited Adaptive Histogram Equalization](http://www.cs.utah.edu/~sujin/courses/reports/cs6640/project2/clahe.html) algorithm in the [Lab color space](https://en.wikipedia.org/wiki/Lab_color_space) to do the contrast enhancement.
+
+* In addition to contrast enhancement, I normalized the images between 0-1.
+
+* As Pierre Sermanent and Yann LeCun mentioned in their [Traffic Sign Recognition with Multi-Scale Convolutional Networks](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf) paper, using color channels didn't seem to improve things a lot and by using grayscale images they still got high accuracy. Nonetheless, I chose to experiment with colored images.
+
+* The following functions from [TFLearn Library](http://tflearn.org/data_augmentation/#image-augmentation) were used for **image augmentation**. The reason behind the image augmentation is the fact that our original training set was highly imbalanced. 
+
 
 Here is an example of a traffic sign image before and after grayscaling.
 
-![alt text][image2]
 
-As a last step, I normalized the image data because ...
 
 ####2. Describe how, and identify where in your code, you set up training, validation and testing data. How much data was in each set? Explain what techniques were used to split the data into these sets. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, identify where in your code, and provide example images of the additional data)
 
-The code for splitting the data into training and validation sets is contained in the fifth code cell of the IPython notebook.  
+As stated above, our original training data was highly imbalance. Feeding our ConvNet with a balanced dataset helps it learn better.
+I've decided to generate augmented data through three techniques by adding the following trasnformations.
+- Rotation (-10 , 10 )
+- Shifting (-5 , 5 )
+- Shearing (-5 , 5 )
 
-To cross validate my model, I randomly split the training data into a training set and validation set. I did this by ...
+Then for each image, I generated 5 additional images with 5 by randomly rotating, shifting and shearing it.
 
-My final training set had X number of images. My validation set and test set had Y and Z number of images.
+After Image Augmentation, our training set size was (208794, 32, 32, 3) as it's  shown as the output of the 20th code cell in IPython notebook.
 
-The sixth code cell of the IPython notebook contains the code for augmenting the data set. I decided to generate additional data because ... To add more data to the the data set, I used the following techniques because ... 
+The following figure is the new distribution of signs for each class.
+![](assets/distribution1.PNG)
 
-Here is an example of an original image and an augmented image:
+- Max observations: 12060
+- Min observations: 1080
 
-![alt text][image3]
 
-The difference between the original data set and the augmented data set is the following ... 
+Here is an example of a traffic sign image afte data augmentation
+
+![](assets/example.PNG)
+
+
+
+Here is the same example after data pre processing.
+
+![](assets/example1.PNG)
+
+The provided data had the data splitted into training and validation sets.
 
 
 ####3. Describe, and identify where in your code, what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
-The code for my final model is located in the seventh cell of the ipython notebook. 
+The code for my final model is located in the 55th cell of the ipython notebook. 
 
 My final model consisted of the following layers:
 
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
 | Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
+| Convolution 3x3     	| 1x1 stride, VALID padding, outputs 28x28x6 	|
+| RELU	                |                                               |
+| Dropout  				|												|
+| Convolution	      	| 2x2 stride,  outputs 16x16x64 				|
+| RELU          	    | etc.      									|
+| Dropout       		| etc.        									|
+| Flatten				| etc.        									|
+| Fully Connected       |                         						|												|
 | RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
- 
+| Fully Connected       |
+| RELU
+|
 
 
 ####4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
@@ -183,3 +200,52 @@ For the first image, the model is relatively sure that this is a stop sign (prob
 
 
 For the second image ... 
+
+
+
+Dataset Exploration 
+==========================
+
+#### Dataset Summary:
+
+- Number of training examples = 34799
+- Number of validation examples = 4410
+- Number of testing examples = 12630
+- Image data shape = (32, 32, 3)
+- Number of classes = 43
+
+!
+
+Design and Test a Model Architecture
+======================================
+
+
+
+#### Data Pre-Processing
+
+
+#### Model Architecture
+
+
+
+#### Model training
+
+
+
+#### Solution Design
+
+
+
+
+Test the Model on New Images
+===================================
+
+##### Acquire New Images
+
+
+#### Performance on New Images 
+
+
+#### Model Certainty-Softmax Probabilities 
+
+
