@@ -1,0 +1,8 @@
+data
+.ipynb_checkpoints
+*.h5
+models
+*.swp
+*.p
+/checkpoints
+/windows_sim
