@@ -7,3 +7,4 @@ models
 /checkpoints
 /windows_sim
 *.pyc
+/data
