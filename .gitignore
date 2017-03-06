@@ -6,3 +6,4 @@ models
 *.p
 /checkpoints
 /windows_sim
+*.pyc
