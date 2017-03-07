@@ -8,3 +8,4 @@ models
 /windows_sim
 *.pyc
 /data
+/my_data
