@@ -1,16 +1,16 @@
-data
-.ipynb_checkpoints
 
-models
+.ipynb_checkpoints
+/bc
 *.swp
 *.p
 /checkpoints
 /windows_sim
 *.pyc
-/data
+
 /my_data
 /old_data
 /new_data
+/data-1
 *.zip
 /run1
 
