@@ -3,7 +3,7 @@ import json
 import os
 
 import cv2
-import matplotlib.pyplot as pyplot
+import matplotlib.pyplot as plt 
 import numpy as np 
 import pandas as pd 
 import scipy.misc
@@ -290,7 +290,7 @@ def silent_delete(file):
     Source: http://stackoverflow.com/questions/10840533/most-pythonic-way-to-delete-a-file-which-may-not-exist
 
 	Args:
-	
+
     - file:
         File to be deleted
 
