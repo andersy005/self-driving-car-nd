@@ -2,6 +2,8 @@ from moviepy.editor import ImageSequenceClip
 import argparse
 
 
+
+
 def main():
     parser = argparse.ArgumentParser(description='Create driving video.')
     parser.add_argument(

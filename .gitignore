@@ -7,11 +7,10 @@
 /windows_sim
 *.pyc
 
-/my_data
-/old_data
-/new_data
-/data-1
+
 *.zip
 /run1
+/run2
+/run
 
 
