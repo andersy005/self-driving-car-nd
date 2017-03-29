@@ -14,7 +14,7 @@ In this project, I use deep neural networks and convolutional neural networks to
 - Train model: Run `python model.py`
 - Final model saved weights: model.h5
 - Final model saved architecture: model.json
-- Behavioral.ipynb has the code to generate the graphs included in this README and some extra ones and **has the model performance video** embedded in it in **cell 21**.
+- [Behavioral.ipynb](https://github.com/andersy005/self-driving-car-nd/blob/master/Project3-Behavioral-Cloning/Behavioral-Cloning.ipynb) has the code to generate the graphs included in this README and some extra ones and **has the model performance video** embedded in it in **cell 21**.
 - drive.py is used to generate the steering angles used by the simulator
 .
 
@@ -33,10 +33,8 @@ The dataset is composed of the following:
 Some Random dataset images visualization
 ![](examples/data.jpg)
 ### Validation set:
-In order to pick the best model and avoid overfitting, 10% of the training dataset was randomly selected for validation.
-- Total number of examples: 7,332
-- Training examples: 6,598
-- Validation examples: 734
+In order to pick the best model and avoid overfitting, for each epoch during training, 6400 images were selected for validation.
+
 
 ### Model description:
 I implemented a model based on the model described in the [NVIDIA paper](http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) in Keras. I used the same layers but fed RGB images instead of YUV images since RGB images gave better results.
@@ -62,7 +60,7 @@ For Image preprocessing, I apply the following steps:
 
 The following image augmentations are performed real time during training :
 
-- ** Random Flip** : Images are flipped about vertical axis and the sign of steering sign is changed. This leads to better generalization for new datasets.
+- **Random Flip** : Images are flipped about vertical axis and the sign of steering sign is changed. This leads to better generalization for new datasets.
 - **Random Shear** 
 
 - **Random Rotation**
@@ -101,8 +99,6 @@ sample Image is used for visualization purposes
 
 
 ### Other data generation tried that did not work:
-- Change brightness
-- Add image rotation
 - Convert image to YUV space
 
 ### Running the simulation:
