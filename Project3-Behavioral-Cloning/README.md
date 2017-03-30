@@ -56,7 +56,8 @@ For Image preprocessing, I apply the following steps:
 
 - **Random gamma** correction is used as an alternative method changing    the brightness of training images.
 
-
+This is the preprocessing pipeline in action"
+![](examples/preprocess.jpg)
 
 The following image augmentations are performed real time during training :
 
@@ -80,6 +81,8 @@ so 40 minutes total for 8 epochs.
 ![Training/Validation Loss](examples/train_val.jpg)
 
 
+### Visualization on the weights of the ConvNet
+![](examples/weights.jpg)
 
 ### Output of first and second convoluational layers
 sample Image is used for visualization purposes
