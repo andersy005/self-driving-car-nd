@@ -3,7 +3,7 @@
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
 
-<img src="computer-vision-notes-and-labs\car.jpeg" alt="Self-Driving Car" width="800px">
+<img src="https://github.com/andersy005/self-driving-car-nd/blob/master/computer-vision-notes-and-labs/assets/car.jpeg" alt="Self-Driving Car" width="800px">
 
 
 Udacity's Self-Driving Car Nanodegree project files and notes.
