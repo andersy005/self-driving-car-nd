@@ -64,7 +64,7 @@ def hls_thresh(img, thresh=(100, 255)):
     binary_output[(s_channel > thresh[0]) & (s_channel <= thresh[1])] = 1
     return binary_output
 
-def pipeline(img, ksize=3):
+def pipeline(image, ksize=3):
     # Apply each of the thresholding functions
     gradx = abs_sobel_thresh(image, orient='x', sobel_kernel=ksize, thresh=(50,100))
     grady = abs_sobel_thresh(image, orient='y', sobel_kernel=ksize, thresh=(50,100 ))
