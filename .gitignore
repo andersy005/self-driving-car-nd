@@ -2,7 +2,6 @@
 .ipynb_checkpoints
 /bc
 *.swp
-*.p
 /checkpoints
 /windows_sim
 *.pyc
