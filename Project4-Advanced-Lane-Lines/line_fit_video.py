@@ -105,7 +105,10 @@ def annotate_video(input_file, output_file):
 
 if __name__ == '__main__':
 	# Annotate the video
-	annotate_video('project_video.mp4', 'out.mp4')
+	#annotate_video('project_video.mp4', 'out.mp4')
+	#annotate_video('challenge_video.mp4', 'challenge_out.mp4')
+	annotate_video('Little_R.mp4', 'LR_out.mp4')
+	
 
 	# Show example annotated image on screen for sanity check
 	img_file = 'test_images/test2.jpg'
