@@ -592,9 +592,7 @@ Once we found the points associated with the lane line, we need to be able to fi
     x = Ay^2 + By + C
 ```
 
-Where A, B and C are polynomial coefficient constants returned by **numpy** *polyfit()* function.  This may seem non-intuitive, but, from the equation's perspective, we are looking at the road from its side rotated 90 degrees from its base.  Here is an example of what this looks like with the fitting polynomial drawn on top, red is the left lane and blue is the right lane:
-
-![Project Video Frame1 Lane Line Fitting](./images/project_video-frame1-lanelines.png)
+Where A, B and C are polynomial coefficient constants returned by **numpy** *polyfit()* function.  This may seem non-intuitive, but, from the equation's perspective, we are looking at the road from its side rotated 90 degrees from its base.
 
 And here is the relevant code segment in the **Line** module:
 
@@ -645,19 +643,6 @@ What this means is that since we are optimizing on speed, the less time we spend
 Getting the line measurements out was the most difficult part of project 4.  In particular, since we wanted to have both a correct aspect ratio of the 'birds-eye' view and being able to project as far into the horizon as possible, this makes calculating the length of the road in the 'birds-eye' view difficult, since distance near the **vanishing point** as explained earlier may not be deterministic.
 
 ##### 2.2.6.1 Lane Line Radius of Curvature Measurements
-Then a fellow student, *Kyle Stewart-Frantz*, came forward with information that were not available before, the actual location of where the video was taken and an estimate of what the radius of curvature of the road at frame 93 of the project video.  Here is the location as drawn on Google Map with the approximate radius curvature in meters:
-
-![Location at Frame 93](./images/frame303.png)
-
-From the reviewer, it seems that the first curve should have an estimated radius of curvature about 900m (+/- 20m error).  Looking at my model and projection calculations, I was not quite sure how to resolve the differences, until I found [US Department of Transportation's Federal Highway Administration's guidelines on Width and Patterns of Longitudinal Pavement Markings (Section 3A.05.)](http://mutcd.fhwa.dot.gov/htm/2003r1/part3/part3a.htm)  In the guidelines it states: "Broken lines should consist of 3 m (10 ft) line segments and 9 m (30 ft) gaps, or dimensions in a similar ratio of line segments to gaps as appropriate for traffic speeds and need for delineation."  So, that mean one set of line and the gap between the lines together should be 12 m in length.  Going back into the projection, we try to find a location nearly straight and start taking some measurements in the 'birds-eye' view.  Frame 338 fit the description and is shown below:
-
-![Project Video Frame 338, Birds-eye view](./output_images/project_video_frame338-birds-eye.png)
-
-And here is another from frame 362:
-
-![Project Video Frame 362, Birds-eye view](./output_images/project_video_frame362-birds-eye.png)
-
-After taking some measurements from both frames, we believe the Y projected distance is approximately 52 meters instead of the assumed 30 meters, but we want to caution that this may just be a at this particular location.  Due to the dynamic nature of the environment where the road horizon rises and falls, the projected distance may change at anytime and may not be predictable at this close to the **vanishing point**.  However, even though this is a rough approximation, it is a better one than the 30 meters that we started with.  Once we updated the **Line** module's *radius_in_meters* function with the new 52 meters value:
 
 ```
 # Define conversions in x and y from pixels space to meters given lane line separation in pixels
@@ -693,17 +678,14 @@ Our **RoadManager** averages the left and right lane line measurements:
 self.radiusOfCurvature = (self.leftLane.radiusOfCurvature + self.rightLane.radiusOfCurvature)/2.0
 ```
 
-And we end up with 896.388019m measurement at the first curve at frame 93 (Full Diagnostics):
+And we end up with 1421.313043m measurement at the curve at frame 623 (Full Diagnostics):
 
-![Project Video Frame 93 Full Diagnostics](./output_images/project_video_frame93_diagfull.png)
+![Project Video Frame 623 Full Diagnostics](./output_images/frame623.png)
 
-And here is frame 93 in its final form:
-
-![Project Video Frame 93 Final](./output_images/project_video_final_frame93.png)
 
 In addition, whenever the left and right lane lines are observed to be nearly straight, we will state this instead of giving a bad radius of curvature measurement.  An example of this is shown below:
 
-![Project Video Nearly Straight Sample](./output_images/project_video_final_nearly_straight_sample.png)
+![Project Video Nearly Straight Sample](./output_images/frame429.png)
 
 ##### 2.2.6.2 Vehicle Position
 Here we are asked to measure the position of the vehicle with respect to the lane lines.  If the vehicle is equal distance away from both the left and right, then it is centered.  If the vehicle is shorter distance away from the left lane than the right lane, then it is left of center.  If it shorter distance away from the right lane than the left lane, then it is right of center.  When a particular lane is shorter distance away, we can measure is shorter distance to the middle of the vehicle and use that as the positioning measurement.  We use the **Line** module's *meters_from_center_of_vehicle* function to measure each lanes distance away from the vehicle's center.
@@ -728,7 +710,6 @@ self.rightLane.radius_in_meters(distance)
 self.rightLane.meters_from_center_of_vehicle(distance)
 ```
 
-It is here that I like to thank *Kyle Stewart-Frantz* again.  It was he that pointed out that my meter to centimeter conversion was off by a factor of 10!  Thanks again Kyle!
 
 #### 2.2.7 Plane to Perspective Transform
 
@@ -750,30 +731,24 @@ self.roadunwarped = self.projMgr.curUnWarp(self.currentImgFtr, self.roadsurface)
 self.final = self.currentImgFtr.miximg(self.currentImgFtr.currentImage, self.roadunwarped, 0.95, 0.75)
 ```
 
-Below are some results from the Jupyter notebook version before it was abandoned:
-
-*NOTE: We were not able to perform at least one of the perspective transform in the set of test images below, and some are poorly done.  This is because we were unable to find an estimated lane line in most of the video frames in the harder challenge video where the right lane line became obscured, nearly vertical or hidden by a passing vehicle.  These are just three of the many failure points in our current, even CLI, implementation.*
-
-![Plane to Perspective Transform using polygon renderings](./output_images/initialJPGlanefindingresults.png)
-
 You may also use the CLI to display the road mask rendering by invoking the `--diag=2` option like so:
 
 ```
-python P4pipeline.py --diag=2 test_images/test5.jpg output_images/test5diag2.jpg
+python advanced_lane_pipeline.py --diag=2 test_images/test5.jpg output_images/test5diag2.jpg
 ```
 
 This will produces this output:
 
 ![Test5 Projection Diag](./output_images/test5diag2.jpg)
 
-Enjoy!
+
 
 #### 2.2.8 Diagnostics
 
 As explained in the previous sections, there are diagnostics screen available from the **DiagManager** to help you with any errors you see happening and see where it may be occurrentIng.  If you believe it is an **ImageFilter** bug, you may want to use the `--diag=1` option to invoke the **ImageFilter** diagnostics as shown here:
 
 ```
-python P4pipeline.py --diag=1 test_images/test1.jpg output_images/test1diag1.jpg
+python advanced_lane_pipeline.py --diag=1 test_images/test1.jpg output_images/test1diag1.jpg
 ```
 
 will produce this image:
@@ -783,7 +758,7 @@ will produce this image:
 If you believe it is a **ProjectionManager** bug, you may want to use the `--diag=2` option to invoke the **ProjectionManager** diagnostics as shown here:
 
 ```
-python P4pipeline.py --diag=2 test_images/test1.jpg output_images/test1diag2.jpg
+python advanced_lane_pipeline.py --diag=2 test_images/test1.jpg output_images/test1diag2.jpg
 ```
 
 will produce this image:
@@ -793,7 +768,7 @@ will produce this image:
 If you believe it is a **RoadManager** or **Line** module bug, you may want to use the `--diag=3` option to invoke the **Full Diagnotics Mode** as shown here:
 
 ```
-python P4pipeline.py --diag=3 test_images/test1.jpg output_images/test1diag3.jpg
+python advanced_lane_pipeline.py --diag=3 test_images/test1.jpg output_images/test1diag3.jpg
 ```
 
 will produce this image:
@@ -814,16 +789,12 @@ There are three test videos from Udacity for this section.  They are:
 
 #### 2.3.2 First N Frame Initialization
 
-For all videos, frame 1 to N initialization is the same, since there are no prior images to pass forward.  The software pipeline is essentially performing all of the steps in section 2.2 using the first frame of the video as the single image.  This process is also repeated if there is a failure in subsequent lane tracking (see section 2.3.4, Confidence Calculations).  Currently, N is set to 2.  Examples of first frame initializations are shown below:
-
-**Project Video: Frame 1**
-
-![Project Video Frame 1 Full Diagnostics](./output_images/project_video_diagfull-frame1.png)
+For all videos, frame 1 to N initialization is the same, since there are no prior images to pass forward.  The software pipeline is essentially performing all of the steps in section 2.2 using the first frame of the video as the single image.  This process is also repeated if there is a failure in subsequent lane tracking (see section 2.3.4, Confidence Calculations).  Currently, N is set to 2.  :
 
 
 #### 2.3.3 Lane-tracking
 
-Once we reach the beyond the first N frames then it becomes more interesting.  The subsequent frames are still going through the **CameraCal** module which does the distortion correction mentioned in section 2.2.2 and the **ImageFilter** module which performs image filtering from section 2.2.3.  However, by now the lane tracking should be close to 100% confidence (see section 2.3.4, Confidence Calculations).  So, now the **ProjectionManager** no longer needs to perform its line approximation to find its source points to transform the image from perspective view to 'birds-eye' view mentioned in section 2.2.4.  Instead, it will start using the source points as it was discovered when the lane lines reached 100% confidence.  As mentioned before, there are hooks for the **RoadManager** module to tweak the source points based on the apparent vertical location of the horizon and **vanishing point** as discovered by the **ImageFilter** module.
+Once we reach the beyond the first N frames then it becomes more interesting.  The subsequent frames are still going through the **calibrateCamera** module which does the distortion correction mentioned in section 2.2.2 and the **ImageFilter** module which performs image filtering from section 2.2.3.  However, by now the lane tracking should be close to 100% confidence (see section 2.3.4, Confidence Calculations).  So, now the **ProjectionManager** no longer needs to perform its line approximation to find its source points to transform the image from perspective view to 'birds-eye' view mentioned in section 2.2.4.  Instead, it will start using the source points as it was discovered when the lane lines reached 100% confidence.  As mentioned before, there are hooks for the **RoadManager** module to tweak the source points based on the apparent vertical location of the horizon and **vanishing point** as discovered by the **ImageFilter** module.
 
 ```
     # an attempt to dampen the bounce of the car and the road surface.
@@ -847,13 +818,7 @@ This **ProjectionManager** *setSrcTop* function was an attempt to dampen the bou
 
 As explained before in section 2.2.5, Lane Line Identification, the first one or two frames went through the exercise of creating histograms and walking up the lanes in the 'birds-eye' view, and then finally fitted a 2nd degree polynomial with the lane lines laying on its sides.  Below is a reminder of the image of the road from its side rotated 90 degrees from its base, as an example from section 2.2.5.3 Fitting a 2nd Degree Polynomial:
 
-![Project Video Frame1 Lane Line Fitting](./images/project_video-frame1-lanelines.png)
-
-Again, notice that there are gaps between the discovered lane line points?  In the next frame, you will find that these points are now filled:
-
-![Project Video Frame1 Lane Line Fitting](./images/project_video-frame2-lanelines.png)
-
-So, what just happen?  How come the 2nd frame was able to more accurately find the lane line points that we had to work hard to find before?  Simple really, as part of fitting the 2nd degree polynomial, the **Line** module also generated a line mask.  This line mask is similar to the region of interest that we used before in Project 1, but instead of masking the entire region where the lane lines could be, we are creating a mask using the found lane line in the previous frame 'birds-eye' view and now applying it to the new frame.  We are creating this mask using the polynomial we fitted before and creating a polygon by adding an offset to either side.  By default it is +/-30 on both sides of the polyline during initialization, but afterwards drops to only +/-5:
+As part of fitting the 2nd degree polynomial, the **Line** module also generated a line mask.  This line mask is similar to the region of interest that we used before in Project 1, but instead of masking the entire region where the lane lines could be, we are creating a mask using the found lane line in the previous frame 'birds-eye' view and now applying it to the new frame.  We are creating this mask using the polynomial we fitted before and creating a polygon by adding an offset to either side.  By default it is +/-30 on both sides of the polyline during initialization, but afterwards drops to only +/-5:
 
 ```
 # create linepoly
@@ -888,23 +853,7 @@ After the masking of the lane line points, the **Line** module counts the number
 1. Faster: Less point counting means less time spent processing
 2. Allow for increase Confidence in Subsequent frame processing
 
-Speed we already talked about before, since our python script was doing the counting, it was less efficient than if Numby or OpenCV did the job.  Now, lets explain why counting half would increase confidence.  As explained before, we counted half of the points and then doubled it for the `self.confidence_based`.  This was because we were quite sure that in the subsequent frame, the lane line points would be there to reach double the point count as long as we were accurate in our findings at the beginning.  For example, here is the Frame 1 again in the Project Video in the Projection Diagnostics:
-
-![Project Video Frame 1 - Lane Line Confidence Diagnostics](./output_images/project_video_diag2Q4-frame1.png)
-
-Notice that at 50% confidence in frame 1, the confidence level of the left lane line had a count of 600 pixel points, while the right side had a count of 503 pixel points.  Now let's look at the frame 2:
-
-![Project Video Frame 2 - Lane Line Confidence Diagnostics](./output_images/project_video_diag2Q4-frame2.png)
-
-Notice that the confidence levels on both lines are now at 100%, since they are capped there.  Also notice that the left pixel counts are now at 5477 and the right at 3611.  This is an increase by a factor of at least 6X, so should not be a problem.  The other thing to notice is that the current frame's lane lines predicted by the last frame were very accurate with hardly any false positives or false negatives.  At 10 frames out:
-
-![Project Video Frame 10 - Lane Line Confidence Diagnostics](./output_images/project_video_diag2Q4-frame10.png)
-
-Both Left and right lane line pixel counts have dropped a little.  Left is at 5381, and right is at 2147, and confidence is still at 100% for both.  At 100 frames out:
-
-![Project Video Frame 100 - Lane Line Confidence Diagnostics](./output_images/project_video_diag2Q4-frame100.png)
-
-Right lane line pixel counts have dropped a little, but the left lane line is now even higher.  Left is at 5381, and right is at 2147, and confidence is still at 100% for both.  Now how is it counting the pixels, and is it fast?  The **RoadManager** is counting the pixels using **Numpy** *nonzero* function to do the counting, using the following code segment:
+Speed we already talked about before, since our python script was doing the counting, it was less efficient than if Numby or OpenCV did the job.  Now, lets explain why counting half would increase confidence.  As explained before, we counted half of the points and then doubled it for the `self.confidence_based`.  This was because we were quite sure that in the subsequent frame, the lane line points would be there to reach double the point count as long as we were accurate in our findings at the beginning.  
 
 ```
 # Left Lane Projection setup
@@ -936,17 +885,7 @@ This in turns sets up a confidence of 50% with a threshold of 716 pixel count fo
 
 ![Project Video Frame 562](./output_images/project_video_frame562.png)
 
-And was successful in reaching 100% confidence on both left and right lane lines again, with a pixel count of 8549 for the left lane line and a 2882 pixel count for the right lane.  However, the software pipeline was not able to completely recover and suffered another relapse at frame 637, just after passing the bridge:
-
-![Project Video Frame 637](./output_images/project_video_frame637.png)
-
-The thing to notice is that the horizon line and **vanishing point** have now come too close to the backoff point and we are now mapping a much larger area than we should.  In this particular case, its the perspective transform source coordinates at fault and needs to be corrected.  In the next frame, as before, the **RoadManager** and **Line** modules initiates a complete restart and goes back to the same routine as described in section 2.2 that results in frame 638:
-
-![Project Video Frame 638](./output_images/project_video_frame638.png)
-
-And by frame 639, the left lane pixel count is now back up to 6608 and the right lane line pixel count is at 2086.  Confidence is restored at 100% once again, and the process repeats until the end of the video frames is reached.
-
-![Project Video Frame 639](./output_images/project_video_frame639.png)
+And was successful in reaching 100% confidence on both left and right lane lines again, with a pixel count of 8549 for the left lane line and a 2882 pixel count for the right lane. 
 
 #### 2.3.6 Failure Intervention
 
@@ -1038,63 +977,14 @@ if self.newYTop is not None:
 
 So, what does this behavior look like in practice?  This animated GIF file shows the answer.  After a partial lane line miss, the **RoadManager** will start requesting the lane lines to climb higher, and we see this walking up the lane effect.
 
-<img src="./images/project_video_failure_prevention.gif" width=640 height=480>
+<img src="./output_images/project_video_failure_prevention.gif" width=640 height=480>
 
 ## 4 Project Video Analysis
 
 As explained earlier, the project video shows the forward facing view of a multi-lane highway.  The road markings are mostly good, with some problems at the low contras areas around bridges.  The weather conditions are nice and the sky is clear.
 
-### 4.1 Failure Scenarios
 
-This video is mostly clean and the problem areas are isolated to the bridges.  The CLI software pipeline is able to handle the video easily with just three restarts at frames: 199, 561 and 638.
-
-#### 4.1.1 Frame 199
-
-At frame 198 in the project video, we find that there the right lane was unable to keep track of the dashed line pavement marking while it curved and dropped to only 443 pixel counts, which was below 50% confidence.
-
-![Project Video Frame 198](./output_images/project_video_frame198.png)
-
-At frame 199, the **RoadManager** module initiates a complete restart and goes back to the same routine as described in section 2.2.  This in turns sets up a confidence of 50% with a threshold of 728 pixel count minimum for the left lane line and 609 pixel count minimum for the right lane line.
-
-![Project Video Frame 199](./output_images/project_video_frame199.png)
-
-At frame 200, the **RoadManager** and **Line** modules attempt to restart the faster process as discussed in detail previously in section 2.3.5, Losing Track and Recovery:
-
-![Project Video Frame 200](./output_images/project_video_frame200.png)
-
-The recovery was successful with confidence restored to 100% for both left and right lane lines and with high pixel counts of 6865 and 5242 respectively.  This issue may be resolvable with the increase the width of the line mask by increasing the *self.maskDelta* from 5 to perhaps 12; however, this may introduce false positive pixel masking, something to look into in the future.
-
-#### 4.1.2 Frame 561
-
-At frame 560 in the project video, we find that there was a jarring bounce that caused the projection to become misaligned, and so the lane lines no longer match for the right lane line.  Notice that the top of the 'birds-eye' view of the lane lines is much wider apart than at the bottom.  At frame 560, the right lane line finally drops below its 50% threshold at 238 pixel count on the concrete bridge and declares it no longer has confidence in its tracking abilities:
-
-![Project Video Frame 560](./output_images/project_video_frame560.png)
-
-At frame 561, the **RoadManger** module initiates a complete restart and goes back to the same routine as described in section 2.2.
-
-![Project Video Frame 561](./output_images/project_video_frame561.png)
-
-This in turns sets up a confidence of 50% with a threshold of 716 pixel count for the left lane and 321 pixel count for the right lane.  At frame 562, the **RoadManager** and **Line** modules attempt to restart the faster process as discussed in detail previously in section 2.3.5, Losing Track and Recovery:
-
-![Project Video Frame 562](./output_images/project_video_frame562.png)
-
-And was successful in reaching 100% confidence on both left and right lane lines again, with a pixel count of 8549 for the left lane line and a 2882 pixel count for the right lane.
-
-#### 4.1.3 Frame 638
-
-However, the software pipeline was not able to completely recover from the bounce experienced at frame 561, and suffered another relaps at frame 637, just after passing the bridge:
-
-![Project Video Frame 637](./output_images/project_video_frame637.png)
-
-The thing to notice is that the horizon line and **vanishing point** have now come too close to the backoff point and we are now mapping a much larger area than we should.  In this particular case, its the perspective transform source coordinates at fault and needs to be corrected.  In the next frame, as before, the **RoadManager** and **Line** modules initiates a complete restart and goes back to the same routine as described in section 2.2 that results in frame 638:
-
-![Project Video Frame 638](./output_images/project_video_frame638.png)
-
-And by frame 639, the left lane pixel count is now back up to 6608 and the right lane line pixel count is at 2086.  Confidence is restored at 100% once again, and the process repeats until the end of the video frames is reached.
-
-![Project Video Frame 639](./output_images/project_video_frame639.png)
-
-## 4.2 Final Conclusion
+## 4.1 Final Conclusion
 
 The take away from the failure and recover points are that the current software pipeline, while bias towards removing false positives, may lack the flexibility to rapidly change its direction when the lane lines changes too much without resorting to a restart.
 
@@ -1202,3 +1092,5 @@ Explore ways to map the generated 'birds-eye' view into a larger image map.  Thi
 This has been a wonderful project, and we wish we could continue further; however, the end of the term is rapidly approaching and we need to get to Project 5!
 
 Cheers!
+
+https://youtu.be/Q3Y2qpATP08
