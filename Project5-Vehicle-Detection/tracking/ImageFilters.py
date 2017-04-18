@@ -394,12 +394,16 @@ class ImageFilters():
                 if maskedEdgeLineSum > thresh:
                     self.throwDistanceFound = True:
                     self.throwDistancePixel = topOfThrow
-                    self.throwDistance = self.throwDistance * ((self.projectedY - topOfThrow)/ self.projectedY)
+                    self.throwDistance = self.throwDistance * \
+                        ((self.projectedY - topOfThrow) / self.projectedY)
 
                     if debug:
-                        self.currentRoadEdgeProjected[topOfThrow:(topOfThrow + 1), :, 0] = 0
-                        self.currentRoadEdgeProjected[topOfThrow:(topOfThrow + 1), :, 1] = 255
-                        self.currentRoadEdgeProjected[topOfThrow:(topOfThrow + 1), :, 2] = 0
+                        self.currentRoadEdgeProjected[
+                            topOfThrow:(topOfThrow + 1), :, 0] = 0
+                        self.currentRoadEdgeProjected[
+                            topOfThrow:(topOfThrow + 1), :, 1] = 255
+                        self.currentRoadEdgeProjected[
+                            topOfThrow:(topOfThrow + 1), :, 2] = 0
                 else:
                     topOfThrow += 1
         return self.throwDistancePixel
@@ -459,8 +463,7 @@ class ImageFilters():
         # Resize the image to get the lane lines to the bottom
         yc[int((self.y/72)*70):self.y, :] = 0
         self.yuv[self.mid:self.y, :, 0] = yc.astype(np.uint8)
-        self.yuv[(self.y - 40): self.y, :, 0] = yo[(self.mid - 40)
-                  : self.mid, :].astype(np.uint8)
+        self.yuv[(self.y - 40): self.y, :, 0] = yo[(self.mid - 40): self.mid, :].astype(np.uint8)
 
         # Convert back to RGB
         self.currentRoadRGB = cv2.cvtColor(
