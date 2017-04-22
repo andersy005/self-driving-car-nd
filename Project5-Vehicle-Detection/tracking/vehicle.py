@@ -299,8 +299,59 @@ class Vehicle():
 
         return self.statusColor
 
-
     def distance(self):
         xoffset = (self.middle - self.xcenter)
         yoffset = (self.projectedY - self.ycenter)
         return np.sqrt(xoffset*xoffset + yoffset*yoffset)
+
+    def sortByDistance(self):
+        return self.distance()
+
+    def unwarp_vehicle(self, img, src, dst, mtx):
+        """
+        Function to project the undistorted camera image to a plane at a side of the vehicle
+        bounding cube ( to take a selfie :) )
+        """
+
+        # Pass in an image, 4 source points:
+        #     src = np.float32([[,],[,],[,],[,]])
+        # and 4 destination points:
+        #     dst = np.float32([[,],[,],[,],[,]])
+        # Note: you could pick any four of the detected corners
+        # as long as those four corners define a rectangle
+        # One especially smart way to do this would be to use four well-chosen
+        # use cv2.getPerspectiveTransform() to get M, the transform matrix
+        # use cv2.warpPerspective() to warp your image to a side
+        # view of vehicle bounding box
+
+        self.src2dstM = cv2.getPerspectiveTransform(src, dst)
+        img_size = (self.selfieX, self.selfieY)
+        warped = cv2.warpPerspective(
+            img, self.src2dstM, img_size, flags=cv2.INTER_LINEAR)
+
+        # warped = gray
+        return warped, self.src2dstM
+
+    def unwarp_vehicle_back(self, img, src, dst, mtx):
+        """
+        Function to project the undistorted camera iamge to a plane at the side.
+        of a vehicle bounding cube - we will use this to project augmentation back on to the vehicle.
+        """
+        # Pass in an image, 4 source points:
+        #     src = np.float32([[,],[,],[,],[,]])
+        # and 4 destination points:
+        #     dst = np.float32([[,],[,],[,],[,]])
+        # Note: you could pick any four of the detected corners
+        # as long as those four corners define a rectangle
+        # One especially smart way to do this would be to use four well-chosen
+        # use cv2.getPerspectiveTransform() to get M, the transform matrix
+        # use cv2.warpPerspective() to warp your image to a side
+        # view of the vehicle bounding box.
+
+        self.dst2srcM = cv2.getPerspectiveTransform(src, dst)
+        img_size = (self.x, self.y)
+        warped = cv2.warpPerspective(
+            img, self.dst2srcM, img_size, flags=cv2.INTER_LINEAR)
+
+        # warped = gray
+        return warped, self.dst2srcM
