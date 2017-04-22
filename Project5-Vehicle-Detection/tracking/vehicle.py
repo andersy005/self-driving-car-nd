@@ -234,3 +234,13 @@ class Vehicle():
             min_colours[(rd + gd + bd)] = name
 
         return min_colours[min(min_colours.keys())]
+
+
+    def get_colour_name(self, requested_colour):
+        """ get a name match for the closest colour"""
+        try:
+            closest_name = webcolors.rgb_to_name(requested_colour)
+        except ValueError:
+            closest_name = self.closest_colour(requested_colour)
+
+        return closest_name
