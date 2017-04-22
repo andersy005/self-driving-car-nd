@@ -180,3 +180,45 @@ class Vehicle():
                 self.roadGrid.setOccluded(oldbox)
             self.roadGrid.insertTrackedObject(
                 self.lane, self.yidx, self.window, self.vehIdx, tracking=True)
+
+        else:
+            # initial windows during detection
+            if self.vehStr in self.roadGrid.vehicle_list:
+                self.box = self.roadGrid.vehicle_list[self.vehStr]
+
+            else:
+                self.roadGrid.vehicle_list[self.vehStr] = self.box
+
+            # windows
+            self.windows = self.roadGrid.getFoundAndNotOccludedWindowsInVehicle(
+                self.vehIdx)
+
+            # boxes
+            self.boxes = self.roadGrid.getFoundAndNotOccludedWindowsInVehicle(
+                self.vehIdx)
+
+            if len(self.boxes) > 0:
+                self.lane, self.yidx = self.roadGrid.gridCoordinates(self.box)
+                self.xcenter, self.ycenter = self.windowCenter(
+                    self.roadGrid.getBoxWindow(self.box))
+
+        # was the vehicle detected in the last iteration?
+        self.detected = True
+
+        # This is automatic now. Voxel will reject if not found.
+        if self.mode == 0:
+            self.mode = 1
+
+        # array of 3d and 2d points for bounding cube
+        # do the calculations for the 2d and 3d bounding box
+        self.cube3d, self.cube2d = self.calculateRoughBoundingCubes(
+            self.windows)
+
+        # create the rough masked image for projection.
+        self.maskVertices, self.maskedImage = self.calculateMask(
+            np.copy(perspectiveImage))
+
+        # project the image for verification
+        self.selfie = self.takeProfileSelfie(self.maskedImage)
+
+        return self.roadGrid
