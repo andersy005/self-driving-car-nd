@@ -296,3 +296,11 @@ class Vehicle():
             # black
             self.statusColor = (0, 0, 0)
             self.status = "Vehicle Lost"
+
+        return self.statusColor
+
+
+    def distance(self):
+        xoffset = (self.middle - self.xcenter)
+        yoffset = (self.projectedY - self.ycenter)
+        return np.sqrt(xoffset*xoffset + yoffset*yoffset)
