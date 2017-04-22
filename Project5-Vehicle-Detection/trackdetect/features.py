@@ -164,7 +164,7 @@ def single_img_features(img, color_space='RGB', spatial_size=(32, 32),
 if __name__ == '__main__':
 
     # Vehicle image
-    image = mpimg.imread('example_images/vehicle.png')
+    image = mpimg.imread('../example_images/vehicle.png')
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
     # Call our function with vis=True to see an image output
@@ -183,7 +183,7 @@ if __name__ == '__main__':
     plt.show()
 
     # Non-car image
-    image = mpimg.imread('example_images/non_vehicle.png')
+    image = mpimg.imread('../example_images/non_vehicle.png')
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
     # Call our function with vis=True to see an image output
