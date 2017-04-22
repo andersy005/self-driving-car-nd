@@ -235,7 +235,6 @@ class Vehicle():
 
         return min_colours[min(min_colours.keys())]
 
-
     def get_colour_name(self, requested_colour):
         """ get a name match for the closest colour"""
         try:
@@ -244,3 +243,56 @@ class Vehicle():
             closest_name = self.closest_colour(requested_colour)
 
         return closest_name
+
+    def modeColor(self):
+        # unknown state black
+        color = (0, 0, 0)
+
+        # DetectionPhase:
+        # 0: Initialized
+        if self.mode == 0:
+            # yellow
+            self.statusColor == (255, 255, 0)
+            self.status = "Initializing....."
+        # 1: DetectionConfirmed
+        elif self.mode == 1:
+            # cyan
+            self.statusColor = (0, 192, 192)
+            self.status = "Detected!"
+
+        # Tracking Phase
+        # 2. Scanning
+        elif self.mode == 2:
+            # blue
+            self.statusColor = (0, 0, 255)
+            self.status = "Scanning...."
+
+        # 3. Vehicle  Acquired
+        elif self.mode == 3:
+            # white
+            self.statusColor = (255, 255, 255)
+            self.status = "Vehicle Acquired"
+
+        # 4. Vehicle Locked
+        elif self.mode == 4:
+            # green
+            self.statusColor = (0, 255, 0)
+            self.status = "Vehicle Locked"
+
+        # 5. Vehicle Occluded
+        elif self.mode == 5:
+            # orange
+            self.statusColor = (255, 165, 0)
+            self.status = "Vehicle Occluded"
+
+        # 6. Vehicle Leaving
+        elif self.mode == 6:
+            # red
+            self.statusColor = (255, 0, 0)
+            self.status = "Vehicle Leaving..."
+
+        # 7. Vehicle Lost
+        elif self.mode == 7:
+            # black
+            self.statusColor = (0, 0, 0)
+            self.status = "Vehicle Lost"
