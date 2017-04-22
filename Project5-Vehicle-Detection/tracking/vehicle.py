@@ -355,3 +355,30 @@ class Vehicle():
 
         # warped = gray
         return warped, self.dst2srcM
+
+    def findCenter(self, masked_projection):
+        """ 
+        Function to find center of projection.
+        """
+        try:
+            points = np.nonzero(masked_projection)
+            x = int(np.average(points[1]))
+            y = int(np.average(points[0]))
+
+        except:
+            h, w = masked_projection.shape[:2]
+            x = int(w/2)
+            y = int(h/2)
+
+        return x, y
+
+    def findMaxColor(self, masked_projection):
+        """
+        Function to find center of max color
+        """
+        xhistogram = np.sum(masked_projection.astype(np.float32), axis=0)
+        yhistogram = np.sum(masked_projection.astype(np.float32), axis=1)
+        x = np.argmax(xhistogram)
+        y = np.argmax(yhistogram)
+
+        return x, y
